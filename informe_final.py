@@ -3,10 +3,10 @@
 """
 Created on Sat Sep 11 08:29:31 2021
 
-@author: clara
+@author: Clara Roig
 """
 
-import fileparse
+import fileparse   #utiliza el módulo fileparse de este mismo repositorio
 
 
 #definimos la función para crear una lista con la mercadería del camión
