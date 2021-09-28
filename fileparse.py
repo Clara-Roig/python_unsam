@@ -2,75 +2,74 @@
 import csv
 
 
-def parse_csv (nombre_archivo, select = None, types = None, has_headers = True, silence_errors = False):
+def parse_csv (file, select = None, types = None, has_headers = True, silence_errors = False):
     
     '''
-    Parsea un archivo CSV en una lista de registros
+    Parsea un archivo CSV o un objeto de estructura similar en una lista de registros
     '''
     
+       
+    rows = csv.reader(file)
     
-    with open(nombre_archivo) as f:
-        rows = csv.reader(f)
-        
         
 ######## opción sin headers:
         
-        if has_headers == False:
+    if has_headers == False:
             
-            if select != None:
-                raise RuntimeError ("para seleccionar se necesita un archivo con encabezados")
+        if select != None:
+            raise RuntimeError ("para seleccionar se necesita un archivo con encabezados")
             
-            else:
-                registros = []
+        else:
+            registros = []
                                 
-                for f, row in enumerate(rows):
+            for f, row in enumerate(rows):
                     
-                    if not row:  #saltea las filas sin datos
-                        continue
+                if not row:  #saltea las filas sin datos
+                    continue
                 
             # convertir a los tipos indicados:
-                    if types:
+                if types:
                         
-                        try:
-                            row = [func(val) for func, val in zip(types, row)]
+                    try:
+                        row = [func(val) for func, val in zip(types, row)]
                             
-                        except ValueError as e:
+                    except ValueError as e:
                             
-                            if silence_errors == False:
-                                print (f'Fila {f}: No pude convertir {row}')
-                                print (f'Fila {f}: Motivo: {e}')
+                        if silence_errors == False:
+                            print (f'Fila {f}: No pude convertir {row}')
+                            print (f'Fila {f}: Motivo: {e}')
                                 
-                            else:
-                                pass
+                        else:
+                            pass
                 
             
             # armar el diccionario:
-                    registro = tuple(row)
-                    registros.append(registro)
+                registro = tuple(row)
+                registros.append(registro)
                     
                     
             
-            return registros
+        return registros
             
         
         
         
 ########################      opción con headers:
     
-        else:
-            headers = next(rows)   #leer los encabezados
+    else:
+        headers = next(rows)   #leer los encabezados
         
-            if select:
-                indices = [headers.index(nombre_columna) for nombre_columna in select]
+        if select:
+            indices = [headers.index(nombre_columna) for nombre_columna in select]
             
-            else:
-                indices = []
+        else:
+            indices = []
         
         
-            registros = []
-            for f, row in enumerate(rows):
-                if not row:  #saltea las filas sin datos
-                    continue
+        registros = []
+        for f, row in enumerate(rows):
+            if not row:  #saltea las filas sin datos
+                continue
             
             # filtrar la fila si se especificaron columnas:
                 if indices:
@@ -78,30 +77,26 @@ def parse_csv (nombre_archivo, select = None, types = None, has_headers = True, 
                 
                 
             # convertir a los tipos indicados:
-                if types:
+            if types:
                     
-                    try:
-                        row = [func(val) for func, val in zip(types, row)]
+                try:
+                    row = [func(val) for func, val in zip(types, row)]
                         
-                    except ValueError as e:
+                except ValueError as e:
                         
-                        if silence_errors == False:
-                            print (f'Fila {f}: No pude convertir {row}')
-                            print (f'Fila {f}: Motivo: {e}')
+                    if silence_errors == False:
+                        print (f'Fila {f}: No pude convertir {row}')
+                        print (f'Fila {f}: Motivo: {e}')
                             
-                        else:
-                            pass
+                    else:
+                        pass
                 
             
             # armar el diccionario:
-                registro = dict(zip(headers, row))
-                registros.append(registro)
+            registro = dict(zip(headers, row))
+            registros.append(registro)
             
             
-        return registros
+    return registros
 
 
-
-camion = parse_csv('../Data/missing.csv', types = [str, int, float], silence_errors = True)
-
-print(camion)
